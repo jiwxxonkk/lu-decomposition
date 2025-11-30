@@ -1,3 +1,15 @@
+def input_equations():
+    print("3x3 연립방정식 Ax = b 입력")
+
+    A = []
+    for i in range(3):
+        row = list(map(float, input(f"A의 {i+1}번째 행 (3개 입력): ").split()))
+        A.append(row)
+
+    b = list(map(float, input("b 벡터 (3개 입력): ").split()))
+
+    return A, b
+
 def gaussianElimination(A, b):
   
   
@@ -57,19 +69,6 @@ def gaussianElimination(A, b):
                 if abs(M[row_idx][k]) < 1e-9: M[row_idx][k] = 0.0
 
     return M
-    
-def input_equations():
-    print("3x3 연립방정식 Ax = b 입력")
-
-    A = []
-    for i in range(3):
-        row = list(map(float, input(f"A의 {i+1}번째 행 (3개 입력): ").split()))
-        A.append(row)
-
-    b = list(map(float, input("b 벡터 (3개 입력): ").split()))
-
-    return A, b
-
 
 def main():
     A, b = input_equations()
