@@ -70,6 +70,48 @@ def gaussianElimination(A, b):
 
     return M
 
+P = [[0.0]*3 for _ in range(3)]
+L = [[0.0]*3 for _ in range(3)]
+U = [[0.0]*3 for _ in range(3)]
+
+def lu_decomposition(A):
+    global P, L, U
+
+    # P를 단위행렬로 초기화, L과 U는 0으로 초기화; U는 A의 복사본으로 시작
+    P = [[0.0]*3 for _ in range(3)]
+    for i in range(3):
+        P[i][i] = 1.0
+    L = [[0.0]*3 for _ in range(3)]
+    U = [list(map(float, row)) for row in A]  # A를 float 형태로 복사
+
+    # LU 분해, 부분 피벗팅
+    for k in range(3):
+        # k번째 열에서 k행부터 2행까지 절댓값 최대 피벗 행 찾기
+        pivot_row = max(range(k, 3), key=lambda r: abs(U[r][k]))
+
+        # 피벗 행이 현재 k행이 아니면, U와 P의 행을 교환하고
+        # 이미 계산된 L의 이전 열 값도 교환
+        if pivot_row != k:
+            U[k], U[pivot_row] = U[pivot_row], U[k]
+            P[k], P[pivot_row] = P[pivot_row], P[k]
+            # 이미 계산된 곱셈 계수(L) 교환 (열 0..k-1)
+            for j in range(k):
+                L[k][j], L[pivot_row][j] = L[pivot_row][j], L[k][j]
+
+        # L의 대각 원소는 1로 설정
+        L[k][k] = 1.0
+
+        # 아래 행 제거를 위한 곱셈 계수 계산 및 U 행 갱신
+        for i in range(k+1, 3):
+            L[i][k] = U[i][k] / U[k][k]
+            for j in range(k, 3):
+                U[i][j] -= L[i][k] * U[k][j]
+
+    # 글로벌 변수에 다시 저장 (지역 변수로 이미 계산했지만 참조 보장)
+    globals()['P'] = P
+    globals()['L'] = L
+    globals()['U'] = U
+
 def main():
     A, b = input_equations()
 
