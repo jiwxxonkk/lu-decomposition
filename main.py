@@ -1,5 +1,5 @@
 def input_equations():
-    print("=== 3x3 연립방정식 Ax = b 입력 ===")
+    print("3x3 연립방정식 Ax = b 입력")
 
     A = []
     for i in range(3):
