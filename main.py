@@ -112,6 +112,24 @@ def lu_decomposition(A):
     globals()['L'] = L
     globals()['U'] = U
 
+def back_substitution(U, y):
+    x = [0.0] * 3
+    for i in range(2, -1, -1):   # 2,1,0 순서
+        tmp = y[i]
+        for j in range(i+1, 3):  # 이미 구한 x
+            tmp -= U[i][j] * x[j]
+        x[i] = tmp / U[i][i]
+    return x
+
+def forward_substitution(L, b):
+    y = [0.0] * 3
+    for i in range(3):
+        tmp = b[i]
+        for j in range(i):     # 이미 구한 y
+            tmp -= L[i][j] * y[j]
+        y[i] = tmp / L[i][i]
+    return y
+
 def main():
     A, b = input_equations()
 
