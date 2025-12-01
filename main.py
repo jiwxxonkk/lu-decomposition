@@ -74,6 +74,10 @@ P = [[0.0]*3 for _ in range(3)]
 L = [[0.0]*3 for _ in range(3)]
 U = [[0.0]*3 for _ in range(3)]
 
+P = [[0.0]*3 for _ in range(3)]
+L = [[0.0]*3 for _ in range(3)]
+U = [[0.0]*3 for _ in range(3)]
+
 def lu_decomposition(A):
     global P, L, U
 
@@ -111,6 +115,16 @@ def lu_decomposition(A):
     globals()['P'] = P
     globals()['L'] = L
     globals()['U'] = U
+    # L,U 출력
+    print("L =")
+    for row in L:
+        print("  [" + ", ".join(f"{x: .6f}" for x in row) + "]")
+    print()
+
+    print("U =")
+    for row in U:
+        print("  [" + ", ".join(f"{x: .6f}" for x in row) + "]")
+    print()
 
 def back_substitution(U, y):
     x = [0.0] * 3
