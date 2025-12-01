@@ -1,4 +1,4 @@
-def input_equations():
+def inputEquations():
     print("3x3 연립방정식 Ax = b 입력")
 
     A = []
@@ -11,7 +11,6 @@ def input_equations():
     return A, b
 
 def gaussianElimination(A, b):
-  
   
     M = [row[:] + [bx] for row, bx in zip(A, b)]
     rows, cols = 3, 4
@@ -78,7 +77,7 @@ P = [[0.0]*3 for _ in range(3)]
 L = [[0.0]*3 for _ in range(3)]
 U = [[0.0]*3 for _ in range(3)]
 
-def lu_decomposition(A):
+def luDecomposition(A):
     global P, L, U
 
     # P를 단위행렬로 초기화, L과 U는 0으로 초기화; U는 A의 복사본으로 시작
@@ -125,8 +124,9 @@ def lu_decomposition(A):
     for row in U:
         print("  [" + ", ".join(f"{x: .6f}" for x in row) + "]")
     print()
+    return L, U
 
-def back_substitution(U, y):
+def backSubstitution(U, y):
     x = [0.0] * 3
     for i in range(2, -1, -1):   # 2,1,0 순서
         sum_value = y[i]
@@ -135,7 +135,7 @@ def back_substitution(U, y):
         x[i] = sum_value / U[i][i]
     return x
 
-def forward_substitution(L, b):
+def forwardSubstitution(L, b):
     y = [0.0] * 3
     for i in range(3):
         sum_value = b[i]
@@ -145,18 +145,21 @@ def forward_substitution(L, b):
     return y
 
 def main():
-    A, b = input_equations()
+    A, b = inputEquations()
 
-    sol_type, info = check_solution_type(A, b)
+    sol_type, info = checkSolutionType(A, b)
 
     if sol_type == "NO_SOLUTION":
         print("해가 없습니다.")
     
     elif sol_type == "UNIQUE":
-        L, U = lu_decomposition(A)
-        y = forward_substitution(L, b)
-        x = back_substitution(U, y)
+        L, U = luDecomposition(A)
+        y = forwardSubstitution(L, b)
+        x = backSubstitution(U, y)
         print("유일해:", x)
 
     else:  # INFINITE
         print("무수히 많은 해:", info)
+
+
+main()
