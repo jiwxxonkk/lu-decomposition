@@ -202,7 +202,12 @@ def luDecomposition(A):
     for row in U:
         print("  [" + ", ".join(f"{x: .6f}" for x in row) + "]")
     print()
-    return L, U
+    # --- 변경: P도 반환하도록 함 ---
+    return P, L, U
+
+def applyPermutation(P, vec):
+    # P는 3x3 permutation matrix, vec는 길이 3 벡터
+    return [sum(P[i][j] * vec[j] for j in range(3)) for i in range(3)]
 
 def backSubstitution(U, y):
     x = [0.0] * 3
@@ -231,8 +236,10 @@ def main():
         print("해가 없습니다.")
     
     elif sol_type == "UNIQUE":
-        L, U = luDecomposition(A)
-        y = forwardSubstitution(L, b)
+        # 변경: luDecomposition이 P,L,U 반환 -> P를 b에 적용
+        P, L, U = luDecomposition(A)
+        Pb = applyPermutation(P, b)   # 여기서 b 순서를 pivot에 맞춰 바꿉니다.
+        y = forwardSubstitution(L, Pb)
         x = backSubstitution(U, y)
         print("유일해:", x)
 
@@ -242,6 +249,5 @@ def main():
         sol = info["solution"]
         for i in range(3):
             print(f"x{i+1} = {sol[i]}")
-
 
 main()
