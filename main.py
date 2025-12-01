@@ -92,8 +92,60 @@ def checkSolutionType(A, b):
             if abs(row[3]) > 1e-9:
                 return "NO_SOLUTION", None # 해가 없음
 
-    # 유일한 해도 아니고 해가 없는 경우도 아니면 무수히 많은 해를 가짐
-    return "INFINITE", M # 가우스 소거한 형태 반환
+    
+    # 피벗(leading 1)이 있는 열을 찾기
+    pivot_cols = []
+    for r in range(3):
+        for c in range(3):
+            if abs(M[r][c] - 1.0) < 1e-9:  # pivot = 1
+                pivot_cols.append(c)
+                break
+
+    # 자유변수 = pivot 없는 column들
+    free_vars = [c for c in range(3) if c not in pivot_cols]
+
+    # === 5) 해 표현 만들기 ===
+    # 변수 이름 x1, x2, x3로 표현
+    solution_expr = [""] * 3
+
+    # free vars: t1, t2 ...
+    param_names = {}
+    for idx, fv in enumerate(free_vars):
+        param_names[fv] = f"t{idx+1}"
+        solution_expr[fv] = param_names[fv]  # x_free = t
+
+    # 기본 변수(Basic variables = pivot variables) 표현
+    for r in range(3):
+        # pivot 찾기
+        pivot_col = -1
+        for c in range(3):
+            if abs(M[r][c] - 1.0) < 1e-9:
+                pivot_col = c
+                break
+
+        if pivot_col == -1:
+            continue  # 이 행은 all-zero row
+
+        expr = f"{M[r][3]:.6g}"  # 상수항
+
+        # pivot 오른쪽 항들(자유변수가 있는 경우) 이동
+        for c in range(pivot_col+1, 3):
+            if abs(M[r][c]) > 1e-9:
+                coeff = M[r][c]
+                if c in free_vars:
+                    tname = param_names[c]
+                    expr += f" - {coeff:.6g}*{tname}"
+
+        solution_expr[pivot_col] = expr
+
+    info = {
+        "free_vars": free_vars,
+        "solution": solution_expr,
+        "row_echelon": M
+    }
+
+    return "INFINITE", info
+
 
 P = [[0.0]*3 for _ in range(3)]
 L = [[0.0]*3 for _ in range(3)]
@@ -185,7 +237,11 @@ def main():
         print("유일해:", x)
 
     else:  # INFINITE
-        print("무수히 많은 해:", info)
+        print("무수히 많은 해: ")
+
+        sol = info["solution"]
+        for i in range(3):
+            print(f"x{i+1} = {sol[i]}")
 
 
 main()
