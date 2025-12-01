@@ -69,6 +69,32 @@ def gaussianElimination(A, b):
 
     return M
 
+def checkSolutionType(A, b):
+    # 행렬식 계산
+    det = (
+        A[0][0]*(A[1][1]*A[2][2] - A[1][2]*A[2][1])
+        - A[0][1]*(A[1][0]*A[2][2] - A[1][2]*A[2][0])
+        + A[0][2]*(A[1][0]*A[2][1] - A[1][1]*A[2][0])
+    )
+
+    # 행렬식!=0 인경우
+    if abs(det) > 1e-9:
+        return "UNIQUE", None # 유일한 해 가짐
+
+    # 행렬식==0인 경우
+
+    # 가우스 소거 진행
+    M = gaussianElimination(A, b)
+
+    # 해 없는 경우 판단 [0,0,0 | c] (단 c!=0)
+    for row in M:
+        if (abs(row[0]) < 1e-9) and (abs(row[1]) < 1e-9) and (abs(row[2]) < 1e-9):
+            if abs(row[3]) > 1e-9:
+                return "NO_SOLUTION", None # 해가 없음
+
+    # 유일한 해도 아니고 해가 없는 경우도 아니면 무수히 많은 해를 가짐
+    return "INFINITE", M # 가우스 소거한 형태 반환
+
 P = [[0.0]*3 for _ in range(3)]
 L = [[0.0]*3 for _ in range(3)]
 U = [[0.0]*3 for _ in range(3)]
